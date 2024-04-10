@@ -1,0 +1,111 @@
+#Joseph Hawkins
+#9/28/2023
+#Issues:N
+#Executable: Y
+
+
+from tabulate import tabulate
+import random
+
+
+#Get users information
+#Old code= Name = input("Enter your name:")
+
+#My handling of user input needed refinement.
+#Program didn't crash but, would except any input
+while True:
+    Name = input('Enter your name: ')
+    if Name.isalpha():
+        break
+    if all(each.isalpha() for each in Name.split()) and len(Name) > 0:
+        break
+    else:
+        print('Enter a name without numbers or symbols (spaces allowed)')
+print('Hello:', Name)
+
+
+# Error handling added.
+# In my old code if the user tried to input anything other than
+# an integer, it would crash and throw a ValueError.
+while True:
+    try:
+        Number = int(input("Enter your phone number:"))
+        if len(str(Number)) == 10:
+            break
+        else:
+            print("Please enter a ten-digit number without spaces or dashes.")
+    except ValueError:
+        print(f"please enter a ten-digit number without spaces or dashes.")
+
+
+#Function to print menu options
+def display_menu():
+    print("Menu Options:")
+    print("1. 1 week")
+    print("2. 2 week")
+    print("3. 3 week")
+    print("4. 4 week")
+    print("5. Quit")
+    print()
+
+
+#Dictionary that turned into a dictionary of dictionaries to hold restasurants and their menu items
+restaurant_list = {
+    'Tacos & More': {
+         'Meals': ['Chicken Tacos', 'Enchilada', 'Burrito Grande']
+    },
+    'Mcdonalds': {
+        'Meals': ['Happy Meal', 'Chicken Nuggets', 'Quarter Pounder']
+    },
+    'Runza': {
+        'Meals': ['Original Runza', 'Cheese Runza', 'Swiss Mushroom Runza']
+    },
+    'Dairy Queen': {
+        'Meals': ['Backyard Bacon Ranch Stackburger', 'Chicken Strip Basket', 'FlameThrower Stackburger']
+    },
+    'The Max': {
+        'Meals': ['Salad', 'Spicy Chicken Strips', 'Wings']
+    },
+}
+
+
+display_menu()
+
+
+#function to randomly select a restaurant then randomly select a meal from that restaurant
+def random_restaurant_and_meal(restaurant_list):
+    random_restaurant = random.choice(list(restaurant_list.keys()))
+    random_meal = random.choice(restaurant_list[random_restaurant]['Meals'])
+    return random_restaurant, random_meal
+
+
+#While loop to handle user selection. If selection is anything other than 5, it creates a list to hold menu data
+#and week data, calls the random restaurant function, appends the day, restaurant, and meal. It extends the menu
+#data with the week specified.
+#Prints menu data to a table using tabulate.
+#exits loop if 5 is selected
+#For lab 3 I have added a try except block to handle invalid input rather than previous else statement.
+while True:
+    try:
+        command = input('Select menu duration (1-5): ')
+        if command == '5':
+            break
+        elif command in {'1','2','3','4'}:
+            num_weeks = int(command)
+            menu_data = []
+            for week in range(num_weeks):
+                week_data = []
+                for day in ['Monday','Tuesday','Wednesday', 'Thursday', 'Friday']:
+                    random_restaurant, random_meal = random_restaurant_and_meal(restaurant_list)
+                    week_data.append([day, random_restaurant, random_meal])
+                menu_data.extend(week_data)
+            headers = ["Day", "Restaurant", "Meal"]
+            print(tabulate(menu_data, headers=headers, tablefmt="grid"))
+
+        else:
+            raise ValueError
+    except ValueError:
+        print("Not a valid command. Enter a number (1-5)\n")
+
+
+print("Bye!")
